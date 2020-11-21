@@ -39,7 +39,9 @@ class Index:
 
     @property
     def document_count(self) -> int:
-        return len(self.dic_index)
+        # print(self.dic_index)
+        return len(self.set_documents)
+
 
     @abstractmethod
     def get_term_id(self, term: str):
