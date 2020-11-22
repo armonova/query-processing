@@ -42,6 +42,29 @@ class RankingModelTest(unittest.TestCase):
                                       "times": TermOccurrence(None, 6, 1)}]
                                     ]
 
+    def test_tf_idf(self):
+        index = FileIndex()
+        index.index("new", 1, 4)
+        index.index("york", 1, 1)
+        index.index("times", 1, 1)
+        index.index("new", 2, 1)
+        index.index("york", 2, 1)
+        index.index("post", 2, 1)
+        index.index("los", 3, 1)
+        index.index("angeles", 3, 1)
+        index.index("times", 3, 1)
+
+        index.finish_indexing()
+        precomp = IndexPreComputedVals(index)
+
+        tos = index.get_occurrence_list("york")
+
+        tf_idf = VectorRankingModel.tf_idf(
+            precomp.doc_count, tos[0].term_freq,
+            VectorRankingModel.doc_count_with_term(tos))
+
+        self.assertAlmostEqual(0.5849625007211562, tf_idf, places=2, msg=f"TFxIDF esperado para o termo york")
+
     def test_precomputed_vals(self):
         index = FileIndex()
         index.index("new", 1, 4)

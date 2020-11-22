@@ -117,7 +117,12 @@ class VectorRankingModel(RankingModel):
     def tf_idf(doc_count: int, freq_term: int, num_docs_with_term) -> float:
         return VectorRankingModel.tf(freq_term) * VectorRankingModel.idf(doc_count, num_docs_with_term) if num_docs_with_term > 0 else 0
 
-    # def sim(self):
+    @staticmethod
+    def doc_count_with_term(list_oc):
+        set_ids = set()
+        for oc in list_oc:
+            set_ids.add(oc.doc_id)
+        return len(set_ids)
 
 
     def get_ordered_docs(self, query: Mapping[str, TermOccurrence],
@@ -146,7 +151,6 @@ class VectorRankingModel(RankingModel):
 
         documents_weight = documents_weight_original_norm
 
-        # retona a lista de doc ids ordenados de acordo com o TF IDF
         return self.rank_document_ids(documents_weight), documents_weight
 
     def calc_weights(self, docs_occur_per_term):
@@ -166,8 +170,3 @@ class VectorRankingModel(RankingModel):
                 return {}
         return weights_query
 
-    def doc_count_with_term(self, list_oc):
-        set_ids = set()
-        for oc in list_oc:
-            set_ids.add(oc.doc_id)
-        return len(set_ids)
