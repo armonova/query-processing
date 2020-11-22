@@ -123,31 +123,13 @@ class VectorRankingModel(RankingModel):
     def get_ordered_docs(self, query: Mapping[str, TermOccurrence],
                          docs_occur_per_term: Mapping[str, List[TermOccurrence]]) -> (List[int], Mapping[int, float]):
 
-        print("query")
-        print(query)
-        print("\ndocs_occur_per_term")
-        print(docs_occur_per_term)
-        print("\ndocument_norm")
-        print(self.idx_pre_comp_vals.document_norm)
-        print("\n\n\n")
-
-        docs_occur_per_term_query = {}
-
         documents_weight_original = self.calc_weights(docs_occur_per_term)
-        print("\ndocuments_weight_original")
-        print(documents_weight_original)
 
         documents_weight_query = self.calc_weights_query(query, docs_occur_per_term)
-        print("documents_weight_query")
-        print(documents_weight_query)
-
-        print("self.idx_pre_comp_vals.document_norm")
-        print(self.idx_pre_comp_vals.document_norm)
 
         documents_weight_original_norm = {}
 
         for key, norm in self.idx_pre_comp_vals.document_norm.items():
-            print(key)
             aux_weight = 0
             for term, dw in documents_weight_original.items():
                 wij = dw[key] if key in dw else 0
@@ -162,8 +144,6 @@ class VectorRankingModel(RankingModel):
         for k in keys:
             del documents_weight_original_norm[k]
 
-        print("documents_weight_original_norm")
-        print(documents_weight_original_norm)
         documents_weight = documents_weight_original_norm
 
         # retona a lista de doc ids ordenados de acordo com o TF IDF
@@ -178,13 +158,12 @@ class VectorRankingModel(RankingModel):
         return weights
 
     def calc_weights_query(self, query, docs_occur_per_term):
-        print("query")
-        print(query)
         weights_query = {}
         for key, q in query.items():
-            weights_query[key] = self.tf_idf(self.idx_pre_comp_vals.doc_count, q.term_freq, self.doc_count_with_term(docs_occur_per_term[key]))
-        print("weights_query")
-        print(weights_query)
+            if key in docs_occur_per_term:
+                weights_query[key] = self.tf_idf(self.idx_pre_comp_vals.doc_count, q.term_freq, self.doc_count_with_term(docs_occur_per_term[key]))
+            else:
+                return {}
         return weights_query
 
     def doc_count_with_term(self, list_oc):
