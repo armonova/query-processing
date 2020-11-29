@@ -76,7 +76,7 @@ class QueryRunner:
 		return None
 
 	@staticmethod
-	def runQuery(query:str, indice:Index, indice_pre_computado: , map_relevantes):
+	def runQuery(query:str, indice:Index, indice_pre_computado, map_relevantes):
 		time_checker = CheckTime()
 
 		#PEça para usuario selecionar entre Booleano ou modelo vetorial para intanciar o QueryRunner

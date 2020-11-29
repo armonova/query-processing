@@ -16,11 +16,12 @@ class ProcessingTest(unittest.TestCase):
         self.index.index("divertindo",1,4)
 
         self.index.finish_indexing()
-        cleaner = Cleaner(stop_words_file="stopwords.txt",language="portuguese",
+        self.cleaner = Cleaner(stop_words_file="stopwords.txt",language="portuguese",
                         perform_stop_words_removal=False,perform_accents_removal=False,
                         perform_stemming=False)
         precomp = IndexPreComputedVals(self.index)
-        self.queryRunner = QueryRunner(VectorRankingModel(precomp), self.index, cleaner)
+        self.queryRunner = QueryRunner(VectorRankingModel(precomp), self.index, self.cleaner)
+        
     def test_count_top_n_relevant(self):
         arr_lists = [[1,2,3,4,5,30,23,234,32,32,3,2,10,20],
                     [-1,-2,-2],
@@ -131,6 +132,12 @@ class ProcessingTest(unittest.TestCase):
             print(f"Pesos dos documento da consulta '{query}': {pesos}")
             print()
             self.assertListEqual(resposta, arr_expected_response[i],f"A resposta a consulta '{query}' deveria ser {arr_expected_response[i]} e não {resposta}")
+
+    def test_get_relevance_per_query(self):
+        self.setUp()
+        dic_relevance_docs = self.queryRunner.get_relevance_per_query()
+        expected_relevance_docs = ['belo_horizonte', 'irlanda', 'sao_paulo']
+        self.assertListEqual(list(dic_relevance_docs.keys()), expected_relevance_docs, f"A resposta '{dic_relevance_docs}' deveria ser {expected_relevance_docs}")
 
 if __name__ == "__main__":
     unittest.main()
