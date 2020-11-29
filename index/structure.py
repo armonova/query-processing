@@ -39,9 +39,7 @@ class Index:
 
     @property
     def document_count(self) -> int:
-        # print(self.dic_index)
         return len(self.set_documents)
-
 
     @abstractmethod
     def get_term_id(self, term: str):
@@ -161,11 +159,17 @@ class TermFilePosition:
 class FileIndex(Index):
     TMP_OCCURRENCES_LIMIT = 10000
 
-    def __init__(self):
+    def __init__(self, str_idx_file_name = "occur_idx_file"):
         super().__init__()
         self.lst_occurrences_tmp = []
         self.idx_file_counter = 0
-        self.str_idx_file_name = "occur_idx_file"
+        self.str_idx_file_name = str_idx_file_name
+
+    def load_vocabulary(self, file_name):
+        with open(file_name, "r") as r_file:
+            r_file.read
+            for line in r_file:
+                self.dic_index[line.strip()] = self.next_from_list()
 
     def get_term_id(self, term: str):
         return self.dic_index[term].term_id if term in self.dic_index else None
@@ -303,8 +307,8 @@ class FileIndex(Index):
 
     def get_occurrence_list(self, term: str) -> List:
         occurrence_list = []
-        if not term in self.dic_index:
-            return []
+        # if not term in self.dic_index:
+        #     return []
 
         with open(self.str_idx_file_name, 'rb') as idx_file:
             while True:
@@ -312,8 +316,8 @@ class FileIndex(Index):
                 if not to:
                     break
                 else:
-                    if to.term_id == self.dic_index[term].term_id:
-                        occurrence_list.append(to)
+                    # if to.term_id == self.dic_index[term].term_id:
+                    occurrence_list.append(to)
 
         return occurrence_list
 

@@ -3,7 +3,7 @@ from nltk.tokenize import word_tokenize
 from util.time import CheckTime
 from query.ranking_models import RankingModel, VectorRankingModel, \
     BooleanRankingModel, IndexPreComputedVals, OPERATOR
-from index.structure import Index, TermOccurrence
+from index.structure import Index, FileIndex, HashIndex, TermOccurrence
 from index.indexer import Cleaner
 
 
@@ -90,35 +90,26 @@ class QueryRunner:
         return pesos
 
     @staticmethod
-    def runQuery(query: str, index: Index, precomp: IndexPreComputedVals, cleaner: Cleaner):
-        relevant_doc = read("Insira uma das opções: belo_horizonte irlanda sao_paulo")
+    def runQuery(query: str, index: Index, cleaner: Cleaner, rank_model, relevant_doc):
+        print("Processing query...")
 
         time_checker = CheckTime()
         time_checker.print_delta("Query Creation")
-
-        # PEça para usuario selecionar entre Booleano ou modelo vetorial para intanciar o QueryRunner
-        # apropriadamente. NO caso do booleano, vc deve pedir ao usuario se será um "and" ou "or" entre os termos.
-        # abaixo, existem exemplos fixos.
-        rank_model_choose = read("VectorRankingModel (1) - BooleanRankingModel AND (2) - BooleanRankingModel OR (3)")
-        rank_model = None
-        if rank_model_choose == 1:
-            rank_model = VectorRankingModel(precomp)
-        elif rank_model_choose == 2:
-            rank_model = BooleanRankingModel(OPERATOR.AND)
-        else:
-            rank_model = BooleanRankingModel(OPERATOR.OR)
 
         qr = QueryRunner(rank_model, index, cleaner)
         map_relevantes = qr.get_relevance_per_query()[relevant_doc]
 
         # Utilize o método get_docs_term para obter a lista de documentos que responde esta consulta
         doc_ids, weights = qr.get_docs_term(query)
-        time_checker.print_delta("anwered with {len(respostas)} docs")
+        time_checker.print_delta(f"anwered with {len(doc_ids)} docs")
 
         # nesse if, vc irá verificar se o termo possui documentos relevantes associados a ele
         # se possuir, vc deverá calcular a Precisao e revocação nos top 5, 10, 20, 50.
         # O for que fiz abaixo é só uma sugestao e o metododo countTopNRelevants podera
         # auxiliar no calculo da revocacao e precisao
+        print(f"doc_ids {doc_ids}")
+        print(f"weights {weights}")
+
         if len(doc_ids) > 0:
             arr_top = [5, 10, 20, 50]
             for n in arr_top:
@@ -131,26 +122,21 @@ class QueryRunner:
     @staticmethod
     def main():
         print("Starting...")
-
-        index = FileIndex()
-
+        index = FileIndex("final_short_index")
+        index.load_vocabulary("vocabulary.txt")
         # Create cleaner
         print("Creating cleaner...")
         cleaner = Cleaner(stop_words_file="stopwords.txt", language="portuguese",
                           perform_stop_words_removal=False, perform_accents_removal=False,
                           perform_stemming=False)
 
-        # Checagem se existe um documento (apenas para teste, deveria existir)
-        print(f"Existe o doc? index.hasDocId(105047)")
-
         # Instancie o IndicePreCompModelo para precomputar os valores necessarios para a query
         print("Precomputando valores atraves do indice...")
-        precomp = IndexPreComputedVals(index)
+        precomp = IndexPreComputedVals(index, 432)
         check_time = CheckTime()
         check_time.print_delta("Precomputou valores")
 
+        return index, precomp, cleaner
 
-        # inserir while
-        query = read("Insira a query: ex (vocês estejam bem)")
-        print("Fazendo query...")
-        QueryRunner.runQuery(query, index, precomp, cleaner)
+if __name__ == "__main__":
+    QueryRunner.main()

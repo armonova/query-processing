@@ -8,8 +8,13 @@ from enum import Enum
 
 
 class IndexPreComputedVals():
-    def __init__(self, index: Index):
+    def __init__(self, index: Index, doc_count=None):
         self.index = index
+        self.doc_count = None
+
+        if doc_count:
+            self.doc_count = doc_count
+
         self.precompute_vals()
 
     def precompute_vals(self):
@@ -20,7 +25,9 @@ class IndexPreComputedVals():
         """
 
         self.document_norm = {}
-        self.doc_count = self.index.document_count
+
+        if not self.doc_count:
+            self.doc_count = self.index.document_count
 
         for doc_id, doc in self.calc_weights().items():
             self.document_norm[doc_id] = math.sqrt(doc)
@@ -32,13 +39,14 @@ class IndexPreComputedVals():
                 if to.doc_id in weights:
                     weights[to.doc_id] = \
                         VectorRankingModel.tf_idf(
-                            self.doc_count, to.term_freq, tfp.doc_count_with_term)**2 + \
+                            self.doc_count, to.term_freq, tfp.doc_count_with_term) ** 2 + \
                         weights[to.doc_id]
                 else:
                     weights[to.doc_id] = VectorRankingModel.tf_idf(
-                        self.doc_count, to.term_freq, tfp.doc_count_with_term)**2
+                        self.doc_count, to.term_freq, tfp.doc_count_with_term) ** 2
 
         return weights
+
 
 class RankingModel():
     @abstractmethod
@@ -115,7 +123,8 @@ class VectorRankingModel(RankingModel):
 
     @staticmethod
     def tf_idf(doc_count: int, freq_term: int, num_docs_with_term) -> float:
-        return VectorRankingModel.tf(freq_term) * VectorRankingModel.idf(doc_count, num_docs_with_term) if num_docs_with_term > 0 else 0
+        return VectorRankingModel.tf(freq_term) * VectorRankingModel.idf(doc_count,
+                                                                         num_docs_with_term) if num_docs_with_term > 0 else 0
 
     @staticmethod
     def doc_count_with_term(list_oc):
@@ -123,7 +132,6 @@ class VectorRankingModel(RankingModel):
         for oc in list_oc:
             set_ids.add(oc.doc_id)
         return len(set_ids)
-
 
     def get_ordered_docs(self, query: Mapping[str, TermOccurrence],
                          docs_occur_per_term: Mapping[str, List[TermOccurrence]]) -> (List[int], Mapping[int, float]):
@@ -158,15 +166,16 @@ class VectorRankingModel(RankingModel):
         for key, tos in docs_occur_per_term.items():
             weights[key] = {}
             for to in tos:
-                weights[key][to.doc_id] = self.tf_idf(self.idx_pre_comp_vals.doc_count, to.term_freq, self.doc_count_with_term(tos))
+                weights[key][to.doc_id] = self.tf_idf(self.idx_pre_comp_vals.doc_count, to.term_freq,
+                                                      self.doc_count_with_term(tos))
         return weights
 
     def calc_weights_query(self, query, docs_occur_per_term):
         weights_query = {}
         for key, q in query.items():
             if key in docs_occur_per_term:
-                weights_query[key] = self.tf_idf(self.idx_pre_comp_vals.doc_count, q.term_freq, self.doc_count_with_term(docs_occur_per_term[key]))
+                weights_query[key] = self.tf_idf(self.idx_pre_comp_vals.doc_count, q.term_freq,
+                                                 self.doc_count_with_term(docs_occur_per_term[key]))
             else:
                 return {}
         return weights_query
-
