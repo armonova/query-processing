@@ -113,7 +113,6 @@ class ProcessingTest(unittest.TestCase):
 
         voces_id = self.index.get_term_id("vocês")
         estejam_id = self.index.get_term_id("estejam")
-        get_docs_term
         arr_expected_response = [{
             "crocodilo": []
         },
