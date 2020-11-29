@@ -159,7 +159,7 @@ class TermFilePosition:
 
 
 class FileIndex(Index):
-    TMP_OCCURRENCES_LIMIT = 1000000
+    TMP_OCCURRENCES_LIMIT = 0
     # TMP_OCCURRENCES_LIMIT = 10000
 
     def __init__(self):
@@ -169,7 +169,7 @@ class FileIndex(Index):
         self.str_idx_file_name = "occur_idx_file"
 
     def get_term_id(self, term: str):
-        return self.dic_index[term].term_id
+        return self.dic_index[term].term_id if term in self.dic_index else None
 
     def create_index_entry(self, term_id: int) -> TermFilePosition:
         return TermFilePosition(term_id)
@@ -297,7 +297,7 @@ class FileIndex(Index):
                         dic_ids_por_termo[to.term_id]["tfp"].term_file_start_pos = pos
                     pos = pos + 1
         else:
-            print("Arquivo indexado maior que 8GB. Memória insificiente")
+            print("Arquivo indexado maior que 8GB. Memória insuficiente")
 
         for i, e in dic_ids_por_termo.items():
             self.dic_index[e["term"]] = e["tfp"]

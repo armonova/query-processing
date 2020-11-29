@@ -50,10 +50,19 @@ class QueryRunner:
 			Coloque o docId como None.
 			Caso o termo nao exista no indic, ele será desconsiderado.
 		"""
-		#print(self.index)
+
 		map_term_occur = {}
+		for term in query.split(" "):
+			pre_p_word = self.cleaner.preprocess_word(term)
+			ocl = self.index.get_occurrence_list(pre_p_word)
+			print(f"pre_p_word {pre_p_word}")
+			print(f"ocl {ocl}")
+			if len(ocl) != 0:
+				to = TermOccurrence(None, ocl[0].term_id, 1)
+				# for to_from_ocl in ocl:
+				# 	to.term_freq = to.term_freq + to_from_ocl.term_freq
 
-
+				map_term_occur[pre_p_word] = to
 
 		return map_term_occur
 

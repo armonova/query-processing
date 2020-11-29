@@ -45,7 +45,7 @@ class ProcessingTest(unittest.TestCase):
                 # print()
                 self.assertEqual(resp_esperada, resposta, msg=f"# de relevantes esperadas top {n}: {resp_esperada} resposta obtida: {resposta}")
 
-    def check_terms_index(self,response:Mapping,expected_response:Mapping):
+    def check_terms_index(self, response:Mapping, expected_response:Mapping):
         #verifica se há algum termo faltando ou sobrando
         set_faltando = set(expected_response.keys())-set(response.keys())
         set_sobrando = set(response.keys())- set(expected_response.keys())
