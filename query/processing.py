@@ -19,12 +19,14 @@ class QueryRunner:
 
 		"""
 		dic_relevance_docs = {}
+
 		for arquiv in ["belo_horizonte","irlanda","sao_paulo"]:
 			with open(f"relevant_docs/{arquiv}.dat") as arq:
 				dic_relevance_docs[arquiv] = set(arq.readline().split(","))
+
 		return dic_relevance_docs
 
-	def count_topn_relevant(self,n,respostas:List[int],doc_relevantes:Set[int]) -> int:
+	def count_topn_relevant(self, n, respostas:List[int], doc_relevantes:Set[int]) -> int:
 		"""
 		Calcula a quantidade de documentos relevantes na top n posições da lista lstResposta que é a resposta a uma consulta
 		Considere que respostas já é a lista de respostas ordenadas por um método de processamento de consulta (BM25, Modelo vetorial).
@@ -32,7 +34,11 @@ class QueryRunner:
 		"""
 		#print(f"Respostas: {respostas} doc_relevantes: {doc_relevantes}")
 		relevance_count = 0
-        
+		n_first = respostas[:n]
+
+		for rd in doc_relevantes:
+			if rd in n_first:
+				relevance_count = relevance_count + 1
 
 		return relevance_count
 

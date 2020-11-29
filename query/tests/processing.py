@@ -35,10 +35,16 @@ class ProcessingTest(unittest.TestCase):
                                    14:[5,0,4,0]}
 
         for n,arr_resp_esperada in resp_esperada_por_top_n.items():
-            #print(f"TOP {n}")
+            # print(f"TOP {n}")
             for i,resp_esperada in enumerate(arr_resp_esperada):
                 resposta = self.queryRunner.count_topn_relevant(n, arr_lists[i], set_relevantes)
+                # print()
+                # print(f"lstResp {arr_lists[i]}")
+                # print(f"set_relevantes {set_relevantes}")
+                # print(f"resp exp {resp_esperada}")
+                # print()
                 self.assertEqual(resp_esperada, resposta, msg=f"# de relevantes esperadas top {n}: {resp_esperada} resposta obtida: {resposta}")
+
     def check_terms_index(self,response:Mapping,expected_response:Mapping):
         #verifica se há algum termo faltando ou sobrando
         set_faltando = set(expected_response.keys())-set(response.keys())
