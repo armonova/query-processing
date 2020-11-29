@@ -42,7 +42,7 @@ class QueryRunner:
 
 		return relevance_count
 
-	def get_query_term_occurence(self, query:str) -> Mapping[str,TermOccurrence]:
+	def get_query_term_occurence(self, query: str) -> Mapping[str, TermOccurrence]:
 		"""
 			Preprocesse a consulta da mesma forma que foi preprocessado o texto do documento (use a classe Cleaner para isso).
 			E transforme a consulta em um dicionario em que a chave é o termo que ocorreu
@@ -50,7 +50,6 @@ class QueryRunner:
 			Coloque o docId como None.
 			Caso o termo nao exista no indic, ele será desconsiderado.
 		"""
-
 		map_term_occur = {}
 		for term in query.split(" "):
 			pre_p_word = self.cleaner.preprocess_word(term)
@@ -59,33 +58,31 @@ class QueryRunner:
 			print(f"ocl {ocl}")
 			if len(ocl) != 0:
 				to = TermOccurrence(None, ocl[0].term_id, 1)
-				# for to_from_ocl in ocl:
-				# 	to.term_freq = to.term_freq + to_from_ocl.term_freq
-
 				map_term_occur[pre_p_word] = to
 
 		return map_term_occur
 
-	def get_occurrence_list_per_term(self, terms:List) -> Mapping[str, List[TermOccurrence]]:
+	def get_occurrence_list_per_term(self, terms: List) -> Mapping[str, List[TermOccurrence]]:
 		"""
 			Retorna dicionario a lista de ocorrencia no indice de cada termo passado como parametro.
 			Caso o termo nao exista, este termo possuirá uma lista vazia
 		"""
-
-
+		dic_terms = {}
+		for term in terms:
+			dic_terms[term] = self.index.get_occurrence_list(term)
 
 		return dic_terms
-	def get_docs_term(self, query:str) -> List[int]:
+
+	def get_docs_term(self, query: str) -> List[int]:
 		"""
 			A partir do indice, retorna a lista de ids de documentos desta consulta
 			usando o modelo especificado pelo atributo ranking_model
 		"""
 		#Obtenha, para cada termo da consulta, sua ocorrencia por meio do método get_query_term_occurence
-		dic_query_occur = None
+		dic_query_occur = self.get_query_term_occurence(query)
 
 		#obtenha a lista de ocorrencia dos termos da consulta
-		dic_occur_per_term_query = None
-
+		dic_occur_per_term_query = self.get_occurrence_list_per_term((dic_query_occur.keys()))
 
 		#utilize o ranking_model para retornar o documentos ordenados considrando dic_query_occur e dic_occur_per_term_query
 		return None

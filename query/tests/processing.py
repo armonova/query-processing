@@ -65,11 +65,12 @@ class ProcessingTest(unittest.TestCase):
             map_resp_list = response
             map_expected_resp_list = expected_response
 
-
+        print(f"map_expected_resp_list {map_expected_resp_list}")
         for term,lst_occur_resp in map_resp_list.items():
             for occur_resp in lst_occur_resp:
                 bol_encontrou = False
                 for expected_occur in map_expected_resp_list[term]:
+                    print(f"expected_occur {expected_occur}")
                     if expected_occur.term_id == occur_resp.term_id and expected_occur.doc_id == occur_resp.doc_id:
                         self.assertEqual(expected_occur.term_freq, occur_resp.term_freq, f"A frequencia do termo '{term}' no documento {expected_occur.doc_id} deveria ser {expected_occur.term_freq}  e não {occur_resp.term_freq}")
                         bol_encontrou = True
