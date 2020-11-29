@@ -113,7 +113,7 @@ class ProcessingTest(unittest.TestCase):
 
         voces_id = self.index.get_term_id("vocês")
         estejam_id = self.index.get_term_id("estejam")
-
+        get_docs_term
         arr_expected_response = [{
             "crocodilo": []
         },
@@ -137,8 +137,8 @@ class ProcessingTest(unittest.TestCase):
         arr_expected_response = [[], [2, 3], [3, 2], [2, 3]]
         for i, query in enumerate(arr_queries):
             resposta, pesos = self.queryRunner.get_docs_term(query)
-            print(f"Pesos dos documento da consulta '{query}': {pesos}")
-            print()
+            # print(f"Pesos dos documento da consulta '{query}': {pesos}")
+            # print(f"arr_expected_response[{i}] {arr_expected_response[i]}")
             self.assertListEqual(resposta, arr_expected_response[i],
                                  f"A resposta a consulta '{query}' deveria ser {arr_expected_response[i]} e não {resposta}")
 
