@@ -159,8 +159,7 @@ class TermFilePosition:
 
 
 class FileIndex(Index):
-    TMP_OCCURRENCES_LIMIT = 0
-    # TMP_OCCURRENCES_LIMIT = 10000
+    TMP_OCCURRENCES_LIMIT = 10000
 
     def __init__(self):
         super().__init__()

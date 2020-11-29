@@ -54,11 +54,12 @@ class QueryRunner:
 		for term in query.split(" "):
 			pre_p_word = self.cleaner.preprocess_word(term)
 			ocl = self.index.get_occurrence_list(pre_p_word)
-			print(f"pre_p_word {pre_p_word}")
-			print(f"ocl {ocl}")
 			if len(ocl) != 0:
 				to = TermOccurrence(None, ocl[0].term_id, 1)
-				map_term_occur[pre_p_word] = to
+				if pre_p_word in map_term_occur:
+					map_term_occur[pre_p_word].term_freq = to.term_freq + 1
+				else:
+					map_term_occur[pre_p_word] = to
 
 		return map_term_occur
 
