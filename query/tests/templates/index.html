@@ -1,41 +1,35 @@
 <!DOCTYPE html>
 <html>
-  <head>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-  </head>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    </head>
 
-  <body>
-     <h1>Insira a consulta</h1>
-    <form method="POST" action = "/send_data">
-      <div class = "form-group">
-        <input type="text" name = "pay">
-      </div>
-      <input class="btn btn-primary" type="submit" value="Pesquisar">
-    </form>
-
-  </body>
+    <body style="text-align: center;">
+        <h1>Atividade 10</h1>
+        <form method="POST" action = "/send_data">
+            <div class = "form-group">
+                <div>
+                    <div style="font-weight: bold; margin-top: 20px;">Digite a consulta</div>
+                    <input type="text" name = "pay">
+                </div>
+                <div>
+                    <div style="font-weight: bold; margin-top: 20px;">Modelagem a ser usada</div>
+                    <input style="margin-left: 10px;" type="radio" id="boleano" name = "model" value="boleano">
+                    <label for="boleano">Boleana</label>
+                    <input style="margin-left: 10px;" type="radio" id="vetorial" name = "model" value="vetorial">
+                    <label for="vetorial">Vetorial</label>
+                </div>
+                <div>
+                    <div style="font-weight: bold; margin-top: 20px;">Escolha a lista de documentos relevantes</div>
+                    <input style="margin-left: 10px;" type="radio" id="relevant_doc_1" name = "relevant_doc" value="belo_horizonte.dat">
+                    <label for="relevant_doc_1">Belo Horizonte</label>
+                    <input style="margin-left: 10px;" type="radio" id="relevant_doc_2" name = "relevant_doc" value="irlanda.dat">
+                    <label for="relevant_doc_2">Irlanda</label>
+                    <input style="margin-left: 10px;" type="radio" id="relevant_doc_3" name = "relevant_doc" value="sao_paulo.dat">
+                    <label for="relevant_doc_3">São Paulo</label>
+                </div>
+            </div>
+            <input class="btn btn-primary" type="submit" value="Pesquisar">
+        </form>
+    </body>
 </html>
-
-
-<!--<!DOCTYPE html>-->
-<!--<html>-->
-<!--<head>-->
-<!--  <title>Arvigo</title>-->
-<!--  <style>-->
-<!--    #rectangle {-->
-<!--      height: 50px;-->
-<!--      width: 100px;-->
-<!--      background-color: #00f28f;-->
-<!--    }-->
-<!--  </style>-->
-<!--</head>-->
-<!--    <body>-->
-<!--    <h1>Insira a consulta</h1>-->
-<!--        <form method="POST" action = "/send_data">-->
-<!--          <div class = "form-group">-->
-<!--            <input type="text" name = "pay">-->
-<!--          </div>-->
-<!--          <input class="btn btn-primary" type="submit" value="Pesquisar">-->
-<!--        </form>-->
-<!--    </body>-->
-<!--</html>-->
