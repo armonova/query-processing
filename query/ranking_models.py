@@ -7,24 +7,19 @@ import math
 from enum import Enum
 
 
-class IndexPreComputedVals():
-    def __init__(self, index: Index, doc_count=None):
+class IndexPreComputedVals:
+    def __init__(self, index: Index):
+        self.document_norm = {}
         self.index = index
         self.doc_count = None
-
-        if doc_count:
-            self.doc_count = doc_count
-
         self.precompute_vals()
 
     def precompute_vals(self):
         """
-        Inicializa os atributos por meio do indice (idx):
+            Inicializa os atributos por meio do indice (idx):
             doc_count: o numero de documentos que o indice possui
             document_norm: A norma por documento (cada termo é presentado pelo seu peso (tfxidf))
         """
-
-        self.document_norm = {}
 
         if not self.doc_count:
             self.doc_count = self.index.document_count
@@ -35,6 +30,7 @@ class IndexPreComputedVals():
     def calc_weights(self):
         weights = {}
         for term, tfp in self.index.dic_index.items():
+            print(f"term {term}")
             for to in self.index.get_occurrence_list(term):
                 if to.doc_id in weights:
                     weights[to.doc_id] = \
@@ -48,7 +44,7 @@ class IndexPreComputedVals():
         return weights
 
 
-class RankingModel():
+class RankingModel:
     @abstractmethod
     def get_ordered_docs(self, query: Mapping[str, TermOccurrence],
                          docs_occur_per_term: Mapping[str, List[TermOccurrence]]) -> (List[int], Mapping[int, float]):

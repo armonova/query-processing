@@ -12,7 +12,6 @@ import time
 import json
 import os
 
-
 class Index:
     def __init__(self):
         self.dic_index = {}
@@ -20,6 +19,7 @@ class Index:
         self.times_index = []
         self.init_time = time.time()
         self.end_time = time.time()
+        self._document_count = 0
 
     def index(self, term: str, doc_id: int, term_freq: int):
         self.init_time = time.time()
@@ -39,7 +39,11 @@ class Index:
 
     @property
     def document_count(self) -> int:
-        return len(self.set_documents)
+        return len(self.set_documents) if not self._document_count else self._document_count
+
+    @document_count.setter
+    def document_count(self, value):
+        self._document_count = value
 
     @abstractmethod
     def get_term_id(self, term: str):
@@ -159,17 +163,18 @@ class TermFilePosition:
 class FileIndex(Index):
     TMP_OCCURRENCES_LIMIT = 10000
 
-    def __init__(self, str_idx_file_name = "occur_idx_file"):
+    def __init__(self, str_idx_file_name="occur_idx_file"):
         super().__init__()
         self.lst_occurrences_tmp = []
         self.idx_file_counter = 0
         self.str_idx_file_name = str_idx_file_name
 
-    def load_vocabulary(self, file_name):
+    def load_dic_index(self, file_name):
         with open(file_name, "r") as r_file:
-            r_file.read
-            for line in r_file:
-                self.dic_index[line.strip()] = self.next_from_list()
+            dic_index_file = json.load(r_file)
+            for term, tfp in dic_index_file.items():
+                self.dic_index[term] = \
+                    TermFilePosition(tfp["term_id"], tfp["term_file_start_pos"], tfp["doc_count_with_term"])
 
     def get_term_id(self, term: str):
         return self.dic_index[term].term_id if term in self.dic_index else None
@@ -196,8 +201,6 @@ class FileIndex(Index):
             vocabulary_file.write('Vocabulary:\n')
             for key, value in self.dic_index.items():
                 vocabulary_file.write(str(key) + "\n")
-
-
 
     def next_from_list(self) -> TermOccurrence:
         return self.lst_occurrences_tmp.pop(0) if self.lst_occurrences_tmp else None
@@ -307,8 +310,8 @@ class FileIndex(Index):
 
     def get_occurrence_list(self, term: str) -> List:
         occurrence_list = []
-        # if not term in self.dic_index:
-        #     return []
+        if not term in self.dic_index:
+            return []
 
         with open(self.str_idx_file_name, 'rb') as idx_file:
             while True:
@@ -316,8 +319,8 @@ class FileIndex(Index):
                 if not to:
                     break
                 else:
-                    # if to.term_id == self.dic_index[term].term_id:
-                    occurrence_list.append(to)
+                    if to.term_id == self.dic_index[term].term_id:
+                        occurrence_list.append(to)
 
         return occurrence_list
 

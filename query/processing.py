@@ -118,12 +118,15 @@ class QueryRunner:
                 precisao = n_tops
                 print(f"Precisao @{n}: {precisao}")
                 print(f"Recall @{n}: {revocacao}")
+                print()
 
     @staticmethod
     def main():
         print("Starting...")
         index = FileIndex("final_short_index")
-        index.load_vocabulary("vocabulary.txt")
+        index.document_count = 432
+        index.load_dic_index("dic_index_short.json")
+
         # Create cleaner
         print("Creating cleaner...")
         cleaner = Cleaner(stop_words_file="stopwords.txt", language="portuguese",
@@ -132,11 +135,8 @@ class QueryRunner:
 
         # Instancie o IndicePreCompModelo para precomputar os valores necessarios para a query
         print("Precomputando valores atraves do indice...")
-        precomp = IndexPreComputedVals(index, 432)
+        precomp = IndexPreComputedVals(index)
         check_time = CheckTime()
         check_time.print_delta("Precomputou valores")
 
         return index, precomp, cleaner
-
-if __name__ == "__main__":
-    QueryRunner.main()

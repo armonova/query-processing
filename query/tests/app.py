@@ -11,12 +11,12 @@ def show_index_html():
 
 @app.route('/send_data', methods=['POST'])
 def get_data_from_html():
-    # pay = request.form['pay']
-    # model = request.form['model']
-    # relevant_doc = request.form['relevant_doc']
-    pay = "vocês"
-    model = "1"
-    relevant_doc = "sao_paulo"
+    pay = request.form['pay']
+    model = request.form['model']
+    relevant_doc = request.form['relevant_doc']
+    # pay = "vocês"
+    # model = "1"
+    # relevant_doc = "sao_paulo"
 
     rank_model = None
     if model == "1":
