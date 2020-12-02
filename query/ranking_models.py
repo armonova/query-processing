@@ -67,7 +67,7 @@ class BooleanRankingModel(RankingModel):
         self.operator = operator
 
     def intersection_all(self, map_lst_occurrences: Mapping[str, List[TermOccurrence]]) -> List[int]:
-
+        print(f"map_lst_occurrences {map_lst_occurrences}")
         set_ids = set()
         for term_1, list_terms in map_lst_occurrences.items():
             for term_2, another_list in map_lst_occurrences.items():
@@ -75,7 +75,6 @@ class BooleanRankingModel(RankingModel):
                     for to in list_terms:
                         if self.exist_to_doc_id(another_list, to):
                             set_ids.add(to.doc_id)
-
         return set_ids
 
     def exist_to_doc_id(self, lst_ocurrences: List[TermOccurrence], term_occurrence: TermOccurrence) -> bool:

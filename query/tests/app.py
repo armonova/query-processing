@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
-from query.processing import QueryRunner, VectorRankingModel, IndexPreComputedVals
+from query.processing import QueryRunner, VectorRankingModel, \
+    IndexPreComputedVals, BooleanRankingModel, OPERATOR
 
 app = Flask(__name__)
 index, precomp, cleaner = None, None, None
@@ -14,9 +15,6 @@ def get_data_from_html():
     pay = request.form['pay']
     model = request.form['model']
     relevant_doc = request.form['relevant_doc']
-    # pay = "vocês"
-    # model = "1"
-    # relevant_doc = "sao_paulo"
 
     rank_model = None
     if model == "1":

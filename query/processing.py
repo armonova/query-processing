@@ -87,11 +87,12 @@ class QueryRunner:
         dic_occur_per_term_query = self.get_occurrence_list_per_term(list(dic_query_occur.keys()))
 
         pesos = self.ranking_model.get_ordered_docs(dic_query_occur, dic_occur_per_term_query)
+        print(pesos)
         return pesos
 
     @staticmethod
     def runQuery(query: str, index: Index, cleaner: Cleaner, rank_model, relevant_doc):
-        print("Processing query...")
+        print(f"\n********* Processing query: {query} *******\n")
 
         time_checker = CheckTime()
         time_checker.print_delta("Query Creation")
@@ -107,17 +108,25 @@ class QueryRunner:
         # se possuir, vc deverá calcular a Precisao e revocação nos top 5, 10, 20, 50.
         # O for que fiz abaixo é só uma sugestao e o metododo countTopNRelevants podera
         # auxiliar no calculo da revocacao e precisao
-        print(f"doc_ids {doc_ids}")
-        print(f"weights {weights}")
+        print("################ DOC_IDS FINAL ###################")
+        print(f"{doc_ids}")
+        print("##################################################")
+        print("\n########### PESOS FINAIS CALCULADOS ##############")
+        print(f"{weights}")
+        print("##################################################")
 
         if len(doc_ids) > 0:
             arr_top = [5, 10, 20, 50]
             for n in arr_top:
                 n_tops = qr.count_topn_relevant(n, doc_ids, map_relevantes)
-                revocacao = len(doc_ids) - n_tops
-                precisao = n_tops
+                len_r = len(map_relevantes)
+                len_a = len(doc_ids)
+                inter_RA = set(doc_ids).intersection(set(map_relevantes))
+                recall = len(inter_RA) / len_r if len_r != 0 else 0
+                precisao = len(inter_RA) / len_a if len_a != 0 else 0
+                print(f"São {n_tops} count_topn_relevant")
                 print(f"Precisao @{n}: {precisao}")
-                print(f"Recall @{n}: {revocacao}")
+                print(f"Recall @{n}: {recall}")
                 print()
 
     @staticmethod
