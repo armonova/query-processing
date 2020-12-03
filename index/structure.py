@@ -172,7 +172,7 @@ class FileIndex(Index):
     def load_dic_index(self, file_name):
         with open(file_name, "r") as r_file:
             dic_index_file = json.load(r_file)
-            for term, tfp in list(dic_index_file.items())[:30]:
+            for term, tfp in dic_index_file.items():
                 self.dic_index[term] = \
                     TermFilePosition(tfp["term_id"], tfp["term_file_start_pos"], tfp["doc_count_with_term"])
 
