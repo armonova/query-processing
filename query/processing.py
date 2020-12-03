@@ -87,7 +87,6 @@ class QueryRunner:
         dic_occur_per_term_query = self.get_occurrence_list_per_term(list(dic_query_occur.keys()))
 
         pesos = self.ranking_model.get_ordered_docs(dic_query_occur, dic_occur_per_term_query)
-        print(pesos)
         return pesos
 
     @staticmethod
@@ -147,5 +146,10 @@ class QueryRunner:
         precomp = IndexPreComputedVals(index)
         check_time = CheckTime()
         check_time.print_delta("Precomputou valores")
+
+        print("\n******* Ordering terms by idf... ********")
+        terms = precomp.get_ordered_terms_by_idf()
+        print(f"\nDESC 10 Maiores termos por idf: {terms[:10]}")
+        print(f"\nDESC 10 Menores termos por idf: {terms[-10:]}\n")
 
         return index, precomp, cleaner

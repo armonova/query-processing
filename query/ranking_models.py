@@ -12,6 +12,7 @@ class IndexPreComputedVals:
         self.document_norm = {}
         self.index = index
         self.doc_count = None
+        self.term_idf = {}
         self.precompute_vals()
 
     def precompute_vals(self):
@@ -30,18 +31,20 @@ class IndexPreComputedVals:
     def calc_weights(self):
         weights = {}
         for term, tfp in self.index.dic_index.items():
-            print(f"term {term}")
             for to in self.index.get_occurrence_list(term):
+                weight = VectorRankingModel.tf_idf(self.doc_count, to.term_freq, tfp.doc_count_with_term) ** 2
+                self.term_idf[term] = VectorRankingModel.idf(self.doc_count, tfp.doc_count_with_term)
                 if to.doc_id in weights:
-                    weights[to.doc_id] = \
-                        VectorRankingModel.tf_idf(
-                            self.doc_count, to.term_freq, tfp.doc_count_with_term) ** 2 + \
-                        weights[to.doc_id]
+                    weights[to.doc_id] = weight + weights[to.doc_id]
                 else:
-                    weights[to.doc_id] = VectorRankingModel.tf_idf(
-                        self.doc_count, to.term_freq, tfp.doc_count_with_term) ** 2
+                    weights[to.doc_id] = weight
 
         return weights
+
+    def get_ordered_terms_by_idf(self):
+        terms = list(self.term_idf.keys())
+        terms.sort(key=lambda x: -self.term_idf[x])
+        return terms
 
 
 class RankingModel:
@@ -67,7 +70,6 @@ class BooleanRankingModel(RankingModel):
         self.operator = operator
 
     def intersection_all(self, map_lst_occurrences: Mapping[str, List[TermOccurrence]]) -> List[int]:
-        print(f"map_lst_occurrences {map_lst_occurrences}")
         set_ids = set()
         for term_1, list_terms in map_lst_occurrences.items():
             for term_2, another_list in map_lst_occurrences.items():
@@ -114,12 +116,14 @@ class VectorRankingModel(RankingModel):
 
     @staticmethod
     def idf(doc_count: int, num_docs_with_term: int) -> float:
+        if num_docs_with_term == 0 or doc_count == 0:
+            return 0
         return math.log2(doc_count / num_docs_with_term)
 
     @staticmethod
     def tf_idf(doc_count: int, freq_term: int, num_docs_with_term) -> float:
-        return VectorRankingModel.tf(freq_term) * VectorRankingModel.idf(doc_count,
-                                                                         num_docs_with_term) if num_docs_with_term > 0 else 0
+        return VectorRankingModel.tf(freq_term) * \
+               VectorRankingModel.idf(doc_count, num_docs_with_term) if num_docs_with_term > 0 else 0
 
     @staticmethod
     def doc_count_with_term(list_oc):
